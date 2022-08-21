@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import noteImage from '../../assets/images/notes.png';
 import tickImage from '../../assets/images/double-tick.png';
 import plusImage from '../../assets/images/plus.png';
+import { useDispatch } from 'react-redux/es/exports';
+import { added, allCompleted, clearCompleted } from '../../redux/todos/actions';
 
 const Header = () => {
+    const dispatch = useDispatch();
+    const completeAll = () => {
+        dispatch(allCompleted());
+    }
+    const clearAll = () => {
+        dispatch(clearCompleted());
+    }
+
+    const [input, setInput] = useState('');
+    const handleInput = (e) => {
+        setInput(e.target.value);
+    }
+    const submitHandler = (e) => {
+        e.preventDefault();
+        dispatch(added(input));
+        setInput('');
+    }
+
     return (
         <div>
             <form
                 className="flex items-center bg-gray-100 px-4 py-4 rounded-md"
+                onSubmit={submitHandler}
             >
                 <img
                     src={noteImage}
@@ -18,6 +39,8 @@ const Header = () => {
                     type="text"
                     placeholder="Type your todo"
                     className="w-full text-lg px-4 py-1 border-none outline-none bg-gray-100 text-gray-500"
+                    value={input}
+                    onChange={handleInput}
                 />
                 <button
                     type="submit"
@@ -32,9 +55,9 @@ const Header = () => {
                         src={tickImage}
                         alt="Complete"
                     />
-                    <span>Complete All Tasks</span>
+                    <span onClick={completeAll}>Complete All Tasks</span>
                 </li>
-                <li className="cursor-pointer">Clear completed</li>
+                <li onClick={clearAll} className="cursor-pointer">Clear completed</li>
             </ul>
         </div>
     );
